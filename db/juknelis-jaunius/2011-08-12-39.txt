@@ -1,0 +1,9 @@
+en.wikinews.org/wiki/Scientists_use_gene_therapy,_patients%27_own_immune_systems_to_fight_leukemia
+Scientists use gene therapy, patients' own immune systems to fight leukemia
+2011-08-12
+August 12, 2011,Published,Archived,Science and technology,Pennsylvania,United States,North America
+Researchers at the University of Pennsylvania have developed a new treatment for a type of leukemia (chronic lymphocytic leukemia) that uses a patient's own immune system to fight cancer cells. Scientists extracted the blood from three male patients, all of whom suffered from advanced leukemia. They inserted a gene into the patients' T-cells (the cells normally responsible for ridding the body of foreign pathogens such as viruses), and the gene reprograms the cells to actively seek out and kill cancer cells within the blood. They then returned the modified blood to the patients.
+The patients initially reported symptoms similar to those of a bad case of the flu, but the researchers pointed out that this was likely due to the body's response to rapid cancer cell death all at once. However, once the symptoms subsided, the scientists found that two of the three patients had no signs of leukemia and the third, while still sick, showed significant improvement. Additionally, they discovered that the modified T-cells not only killed existing cancer cells, but brand new ones as well.
+Though optimistic, experts say that more research needs to be done to determine if this will be a viable treatment on a large scale and warn that this therapy would not be available as an approved treatment for several more years.
+
+
