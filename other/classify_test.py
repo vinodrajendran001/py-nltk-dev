@@ -1,5 +1,9 @@
+import sys
+sys.path.append("..") # allow to include `config` from parent directory
+
 import nltk, pickle, config, data, random
 
+# samples: text_tag/class, text
 train = [
 	["ruduo", "obuoliai buvo skanus, taciau jais megautis galima tik rudeni"], 
 	["ruduo", "rudens gerybes neuzilgo prades rodyti savo pintines"],
@@ -12,28 +16,31 @@ train = [
 test = [
 	["ruduo", "kriauses, obuoliai ir siaip, geltoni klevo lapai parodo, kad jau nebe vasara"], 
 	["ruduo", "kas zino, gal visos balos, kurios atsiranda rudeni isnyks vos tik pakelsime pintines"],
-	["ruduo", "du gyvenotjai be kepuriu sedejo valgymo istaigoje ir skaniai cepsejo"],
-	["ruduo", "mama pakviete mane pavalgyti, nors norejau jau lekti i Biciulius, bet neteko nusivilti"],
-	["ruduo", "raudonikiai, baravykai ir kiti grybai man labai patinka, ypac rudeni prie bulviu"],
-	["ruduo", "patyres grybautojas Rimas sako, jog reiketu perdaryti visa rudens ir valgymo sezono skrajuciu pateikima"],
+	["pietauti", "du gyventojai be kepuriu sedejo valgymo istaigoje ir skaniai cepsejo"],
+	["pietauti", "mama pakviete mane pavalgyti, nors norejau jau lekti i Biciulius, bet neteko nusivilti"],
+	["grybauti", "raudonikiai, baravykai ir kiti grybai man labai patinka, ypac rudeni prie bulviu"],
+	["ruduo", "patyres grybautojas Rimas sako, jog reiketu perdaryti visa rudens sezono skrajuciu pateikima"],
 	["ruduo", "sakoma, jog vandens bus iki kaklo, kai prades lyti"],
-	["ruduo", "aplink ruda dabar visur, gal sutems greitai"], 
-	["ruduo", "visur styrojo vienos balos ir pageltusiu lapu kruvos"]
+	["ruduo", "aplink rudeneja dabar visur, gal sutems greitai"], 
+	["ruduo", "visur telksojo vienos balos ir pageltusiu lapu kruvos"]
 ]
 
+# generate a dictionary of all words (features)
 def bag_of_words(wordlist, stemmer):
-	return dict([(stemmer.lemmatize(word.lower()), True) for word in wordlist if len(word) > 1])
-	
+	return {stemmer.lemmatize(word.lower()):True for word in wordlist if len(word) > 1}
+
+
 def load_samples(sample_list, stemmer):
 	data_set = []
 	for cat, text in sample_list:
-		tokens = nltk.tokenize.wordpunct_tokenize(text)
-		data_set.append((bag_of_words(tokens, stemmer), cat))
-	random.shuffle(data_set)
+		tokens = nltk.tokenize.wordpunct_tokenize(text) # chop sentence into words/tokens
+		data_set.append((bag_of_words(tokens, stemmer), cat)) # make directory from the words & assign category
+	random.shuffle(data_set) # randomly shuffle the data
 	return data_set
 	
 def run():
-	stemmer = nltk.stem.WordNetLemmatizer()
+	# stemmer converts words to their base form, e.g. cats -> cat (only works for english vocabulary now)
+	stemmer = nltk.stem.WordNetLemmatizer() 
 
 	print "Loading training & testing data"
 	training_set = load_samples(train, stemmer)
@@ -48,6 +55,7 @@ def run():
 	
 	print "-"*80
 
-	
-if __name__ == "__main__":
+
+# if we launch this script by double-click, then execute code below
+if __name__ == "__main__": 
 	run()
