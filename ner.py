@@ -147,7 +147,7 @@ class NERFinder:
 									print "Found a spanish name, old name:", fullname,", new fullname:", new_fullname
 									data['shortnames'].append(fullname)
 									data['fullname'] = new_fullname
-									people[fullname] = data
+									people[new_fullname] = data
 									complete = True
 									break
 			if complete: break # dont analyze more sentences

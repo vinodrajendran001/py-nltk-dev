@@ -1,15 +1,8 @@
-import nltk, data, summarize, pickle, ner, config, training, sys
+import nltk, data, summarize, pickle, ner, config, training, sys, utils
 from nltk.tree import Tree
 
 # show commandline arguments
 print "CLI:", sys.argv
-
-# helper function to aggregate all tags into one place
-def join_tagged(tagged):
-	s = ""
-	for text, tag in tagged:
-		s += " " + text + "/" + tag
-	return s
 
 path = "db/ivonyte-aiste/2011-7-3-1.txt"
 article = data.Article(path)
@@ -29,7 +22,7 @@ tokenized_sentences = [nltk.tokenize.wordpunct_tokenize(s) for s in sentences]
 tagged_sentences = [nltk.pos_tag(s) for s in tokenized_sentences]
 
 # show the output
-print join_tagged(tagged_words)
+print utils.join_tagged(tagged_words)
 print "-"*80
 print tagged_sentences
 print "-"*80
