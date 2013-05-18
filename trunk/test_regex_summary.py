@@ -11,7 +11,7 @@ def join_tagged(tagged):
 		s += " " + text + "/" + tag
 	return s
 
-path = "db/ivonyte-aiste/2011-7-8-1.txt"
+path = "db/ivonyte-aiste/2011-7-3-1.txt"
 article = data.Article(path)
 print "-"*80
 print article.text
@@ -62,13 +62,27 @@ grammar = r"""
 # do our custom chunking
 cp = nltk.RegexpParser(grammar) 
 
+instance  = ner.NERFinder()
+people = instance.find(tagged_words, sentences, tagged_sentences)
+
+print type(people)
+
+for key in people.keys():
+  print key, people[key]
+
+#for key, value in people.items():
+#  print key, value  
+
 start = 0
-end = 3
+end = 15
 for index, sentence in enumerate(tagged_sentences):
 	chunked_sentence = cp.parse(sentence) # nltk.chunk.ne_chunk(sentence)
 	if (index < end and index >= start):
 		print "oooo", sentences[index]
 		print
 		print "####", chunked_sentence
-		
+
+
+
+
 		
