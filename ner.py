@@ -130,5 +130,6 @@ class NERFinder:
 		print "People mentioned in article:"
 		for i, (fullname, data) in enumerate(people.items()):
 			print "\t%d. %s ="%(i+1, fullname), data
-		
 		#index = self.find_sentence(fullname, tagged_sentences)
+		
+		return people
