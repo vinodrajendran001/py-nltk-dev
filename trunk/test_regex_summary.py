@@ -1,4 +1,4 @@
-import nltk, data, summarize, pickle, ner, config, training, sys, utils
+import nltk, data, summarize, pickle, ner, config, training, sys, utils, regexp
 from nltk.tree import Tree
 
 # show commandline arguments
@@ -18,7 +18,7 @@ if "-f" in sys.argv:
   tagged_words = nltk.pos_tag(tokens)
   pickle.dump(tagged_words, file('tagged_words.txt', 'w'))
 
-# extract & tokenize each sentence separately
+  # extract & tokenize each sentence separately
   print "Tokenizing & tagging sentences..."
   sentences = nltk.tokenize.sent_tokenize(article.text)
   pickle.dump(sentences, file('sentences.txt', 'w'))
@@ -36,46 +36,16 @@ print "-"*80
 print tagged_sentences
 print "-"*80
 
-# WDT - with, CD - number, CC - and, PRP - she;I, POS - `, MD - will, PRP$ - his, JJ - crucial;political, RB - even, not
-# IN - at/in, DT - a, the, those, NN - noun(sun, dog, ...)
-# TODO: revise grammar & regexp
-grammar = r"""
-  APLINKYBES: {<IN><DT|CD|NN.*|POS|:>+<IN>*}
-  VIETA: {<NNP><NN..>+}
-  VEIKSNYS: {<DT><JJ>*<NN.*>*<:>*<NN.>*} # Chunk sequences of DT, JJ, NN
-  TARINYS: {<EX>*<MD>*<RB>?<V.|V..>+<IN>*<NP|PP>*<TO>?<RB>?<JJ|NN>?<V.|V..>*} # Chunk verbs and their arguments
-  OBJEKTAS: {<NN.>*<:|C.>*<NN.>*}
-  PAPILDINYS: {<RB>*<IN>*<DT>*<JJ>*<NN?>*}
-  JUNGTUKAS: {<CC>}
-  IVARDIS: {<PRP.*><PRP.*>*}
-  """
-
-''' old backup grammar:
-grammar = r"""
-  APLINKYBES: {<IN><DT|CD|NN.*|POS|:>+}
-  VIETA: {<NNP><NN..>+}
-  VEIKSNYS: {<DT><JJ>*<NN.*>+}        # Chunk sequences of DT, JJ, NN
-  TARINYS: {<MD>*<V.|V..>*<IN*><NP|PP>*<TO>?} # Chunk verbs and their arguments
-  PAPILDINYS: {<IN>*<DT>*<JJ><NN?>*}
-  SAKINYS: {<APLINKYBES><VEIKSNYS><TARINYS><APLINKYBES>*}
-  BRAND: {<NN.>*<:|CD>*<NN.>*}
-  """
-'''
-
-# do our custom chunking
-cp = nltk.RegexpParser(grammar) 
-
 instance  = ner.NERFinder()
 people = instance.find(tagged_words, sentences, tagged_sentences)
 
-start = 0
-end = 15
+# chunk the sentences
+cp = regexp.CustomChunker()
+start, end = 0, 15 # show sentences indexed from start to end
 for index, sentence in enumerate(tagged_sentences):
 	chunked_sentence = cp.parse(sentence) # nltk.chunk.ne_chunk(sentence)
-
-
-	if (index < end and index >= start):
-		print "oooo", sentences[index]
+	if index < end and index >= start:
+		print "[",index,"] oooo", sentences[index]
 		print
-		print "####", chunked_sentence
+		print "[",index,"] ####", chunked_sentence
 	
