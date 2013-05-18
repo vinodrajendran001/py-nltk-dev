@@ -19,7 +19,6 @@ def bag_of_words(tokens, text, stemmer):
 			bag['3gram(%s %s %s)'%(text[pos-1].lower(), t_lower, text[pos+1].lower())] = True'''
 	return bag
 
-# 
 def load_samples(sample_list, stemmer, max_words):
 	data_set = []
 	for (filename, category) in sample_list:
@@ -35,7 +34,7 @@ def load_samples(sample_list, stemmer, max_words):
 	random.shuffle(data_set)
 	return data_set
 	
-# ok, do some work here - train the classifier using training set & test it agains test set
+# ok, do some work here - train the classifier using training set & test it against test set
 def run(classifier, max_words):
 	print "Classifier:", classifier,"max words:", max_words
 
@@ -93,7 +92,7 @@ if __name__ == "__main__":
 	#print "CLI arguments:", sys.argv
 	if "-n" in sys.argv:
 		print "Using default NaiveBayesClassifier classifer"
-		run(nltk.classify.NaiveBayesClassifier, 10000)
+		run(nltk.classify.NaiveBayesClassifier, 1000)
 	elif "-m" in sys.argv: 
 		print "Using MaxentClassifier classifer"
 		run(nltk.classify.MaxentClassifier, 100)

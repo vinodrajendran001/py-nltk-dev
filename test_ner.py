@@ -38,4 +38,5 @@ print tagged_sentences
 print "-"*80
 
 # do the magic - find named entities
-ner.NERFinder(tagged_words, sentences, tagged_sentences)
+instance  = ner.NERFinder()
+people = instance.find(tagged_words, sentences, tagged_sentences)

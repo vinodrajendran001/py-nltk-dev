@@ -5,10 +5,10 @@ from nltk.tree import Tree
 # 1) go through all sentences & search for missed names from DB!
 # 2) Detection relations between found entities - scan text
 class NERFinder:
-	def __init__(self, tagged_words, sentences, tagged_sentences):
+	def __init__(self):
 		self.load_names()
 		#self.load_cities()
-		self.find(tagged_words, sentences, tagged_sentences)
+		#self.find(tagged_words, sentences, tagged_sentences)
 
 	def load_names(self):
 		with open(config.MALE_NAME_FILE) as fp:
