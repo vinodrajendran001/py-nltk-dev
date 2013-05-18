@@ -1,8 +1,8 @@
+import regexp
 
 class Actions:
 	# fills people data with actions that they did according to article text
 	def find(self, tagged_words, tagged_sentences, people):
-		print "-"*80
 		for i, (fullname, data) in enumerate(people.items()):
 			names = set()
 			for short in data['shortnames']:
@@ -11,7 +11,7 @@ class Actions:
 			names.update(fullname.lower().split(" "))
 			names.add(fullname.lower())
 			
-			data['actions'] = [] # empty action list
+			data['actions'] = set() # empty action list
 			for index, sentence in enumerate(tagged_sentences):
 				found = False
 				verb = False
@@ -27,10 +27,11 @@ class Actions:
 							#print "adding action:", word
 							verb = True
 							act.append(word.lower())
+							#TODO: check the action after regexp based chunker 
 						elif verb: # all verbs collected & this word found is a non verb
 							# ok, we're done here, so bail out of sentence
 							#print "all verbs collected, so bail out!"
 							break
 				if len(act) > 0: # dont include empty actions
-					data['actions'].append(" ".join(act));
+					data['actions'].add(" ".join(act));
 		return people

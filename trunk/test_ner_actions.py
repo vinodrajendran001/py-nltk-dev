@@ -46,11 +46,14 @@ print "-"*80
 
 # show people in the article
 for i, (key, value) in enumerate(people.items()):
-	print i+1,":",key, value
+	print "[%d] - %s = %s"%(i+1, key, value)
 
 print "Searching for people actions..."
 work = action.Actions().find(tagged_words, tagged_sentences, people)
 
+print "-"*80
+print "Actions found:"
+
 # print the updated info with people actions
 for i, (key, value) in enumerate(work.items()):
-	print i+1,":",key, "=", value
+	print "[%d] - %s = %s"%(i+1, key, value)
