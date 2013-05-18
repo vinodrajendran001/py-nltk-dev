@@ -155,7 +155,7 @@ class NERFinder:
 	def find(self, tagged_words, sentences, tagged_sentences):
 		chunked = nltk.chunk.ne_chunk(tagged_words)
 		title_list = []
-		print chunked
+		#print chunked
 		self.find_names(chunked, title_list)
 		
 		people = self.extract_fullnames(title_list)
