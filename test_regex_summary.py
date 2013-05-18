@@ -10,16 +10,25 @@ print "-"*80
 print article.text
 print "-"*80
 
-# tokenize & tag all words in article
-print "Tokenizing & tagging words..."
-tokens = nltk.tokenize.wordpunct_tokenize(article.text)
-tagged_words = nltk.pos_tag(tokens)
+# we give parameter to load everything from file and to save some time :) 
+if "-f" in sys.argv:
+  # tokenize & tag all words in article
+  print "Tokenizing & tagging words..."
+  tokens = nltk.tokenize.wordpunct_tokenize(article.text)
+  tagged_words = nltk.pos_tag(tokens)
+  pickle.dump(tagged_words, file('tagged_words.txt', 'w'))
 
 # extract & tokenize each sentence separately
-print "Tokenizing & tagging sentences..."
-sentences = nltk.tokenize.sent_tokenize(article.text)
-tokenized_sentences = [nltk.tokenize.wordpunct_tokenize(s) for s in sentences]
-tagged_sentences = [nltk.pos_tag(s) for s in tokenized_sentences]
+  print "Tokenizing & tagging sentences..."
+  sentences = nltk.tokenize.sent_tokenize(article.text)
+  pickle.dump(sentences, file('sentences.txt', 'w'))
+  tokenized_sentences = [nltk.tokenize.wordpunct_tokenize(s) for s in sentences]
+  tagged_sentences = [nltk.pos_tag(s) for s in tokenized_sentences]
+  pickle.dump(tagged_sentences, file('tagged_sentences.txt', 'w'))
+else:
+  tagged_sentences =  pickle.load(file('tagged_sentences.txt', 'r'))
+  tagged_words =  pickle.load(file('tagged_words.txt', 'r'))
+  sentences =  pickle.load(file('sentences.txt', 'r'))
 
 # show the output
 print utils.join_tagged(tagged_words)
@@ -33,11 +42,12 @@ print "-"*80
 grammar = r"""
   APLINKYBES: {<IN><DT|CD|NN.*|POS|:>+<IN>*}
   VIETA: {<NNP><NN..>+}
-  VEIKSNYS: {<DT><JJ>*<NN.*>*<:>*<NN.>*}        # Chunk sequences of DT, JJ, NN
+  VEIKSNYS: {<DT><JJ>*<NN.*>*<:>*<NN.>*} # Chunk sequences of DT, JJ, NN
   TARINYS: {<EX>*<MD>*<RB>?<V.|V..>+<IN>*<NP|PP>*<TO>?<RB>?<JJ|NN>?<V.|V..>*} # Chunk verbs and their arguments
   OBJEKTAS: {<NN.>*<:|C.>*<NN.>*}
   PAPILDINYS: {<RB>*<IN>*<DT>*<JJ>*<NN?>*}
   JUNGTUKAS: {<CC>}
+  IVARDIS: {<PRP.*><PRP.*>*}
   """
 
 ''' old backup grammar:
@@ -58,24 +68,14 @@ cp = nltk.RegexpParser(grammar)
 instance  = ner.NERFinder()
 people = instance.find(tagged_words, sentences, tagged_sentences)
 
-print type(people)
-
-for key in people.keys():
-  print key, people[key]
-
-#for key, value in people.items():
-#  print key, value  
-
 start = 0
 end = 15
 for index, sentence in enumerate(tagged_sentences):
 	chunked_sentence = cp.parse(sentence) # nltk.chunk.ne_chunk(sentence)
+
+
 	if (index < end and index >= start):
 		print "oooo", sentences[index]
 		print
 		print "####", chunked_sentence
-
-
-
-
-		
+	
