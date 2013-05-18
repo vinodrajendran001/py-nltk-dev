@@ -37,7 +37,7 @@ def load_samples(sample_list, stemmer, max_words):
 	
 # ok, do some work here - train the classifier using training set & test it agains test set
 def run(classifier, max_words):
-	print "Classifier:", classifier,"max words:",max_words
+	print "Classifier:", classifier,"max words:", max_words
 
 	# unserialize data
 	print "Importing pickled data lists"
@@ -52,12 +52,13 @@ def run(classifier, max_words):
 	print "Train on %d samples, Test on %d samples" % (len(training_set), len(testing_set))
 	
 	# do the actual classifier training
-	# TODO: add more classifiers here WekaClassifier, DecisionTreeClassifier from nltk.classify
 	instance = None
 	if classifier == nltk.classify.NaiveBayesClassifier:
 		instance = nltk.classify.NaiveBayesClassifier.train(training_set)
 	elif classifier == nltk.classify.MaxentClassifier:
 		instance = nltk.classify.MaxentClassifier.train(training_set, max_iter=config.MAX_TRAINING_ITERS)
+	elif classifier == nltk.classify.DecisionTreeClassifier:
+		instance = nltk.classify.DecisionTreeClassifier.train(training_set, binary=False)
 		
 	# serialize the classifer to file (for later use)
 	with file(config.CLASSIFIER_FILE, 'wb') as fp:
@@ -67,7 +68,10 @@ def run(classifier, max_words):
 	print "Evaluating classifier accuracy..."
 	accuracy = nltk.classify.util.accuracy(instance, testing_set)
 	print "Classifier accuracy:", accuracy
-	instance.show_most_informative_features(10)
+	if  classifier != nltk.classify.DecisionTreeClassifier:
+		instance.show_most_informative_features(10)
+	else:
+		print instance.pp(width=70, prefix=u'', depth=4)
 	print "-"*80
 	
 	# manual classification test 
@@ -86,12 +90,13 @@ def run(classifier, max_words):
 	
 # script start spot
 if __name__ == "__main__":
-	print "CLI arguments:", sys.argv
-	if "2" in sys.argv: # run in commandline: "python training.py 2"
+	#print "CLI arguments:", sys.argv
+	if "-n" in sys.argv:
+		print "Using default NaiveBayesClassifier classifer"
+		run(nltk.classify.NaiveBayesClassifier, 10000)
+	elif "-m" in sys.argv: 
 		print "Using MaxentClassifier classifer"
 		run(nltk.classify.MaxentClassifier, 100)
-	else:
-		# default option
-		print "Using default NaiveBayesClassifier classifer"
-		run(nltk.classify.NaiveBayesClassifier, 100000)
-		
+	elif "-d" in sys.argv:
+		print "Using DecisionTreeClassifier"
+		run(nltk.classify.DecisionTreeClassifier, 10)
