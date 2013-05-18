@@ -93,38 +93,74 @@ class NERFinder:
 		for fullname, data in people.items():
 			name_good = None
 			for index, s in enumerate(sentences):
-				if fullname in s:
-					name_part = fullname.split(" ")[0]
-					tag_s = tagged_sentences[index]
-					prev_tag = None
-					for i, (word, tag) in enumerate(tag_s):
-						if word == name_part: # found the name
-							if prev_tag != None: # check for IN (which denotes place name instead of person)
-								if prev_tag[1] == "IN" and (prev_tag[0] in ("in", "at", "of")):
-									name_good = False
-									break
-								elif prev_tag[1] == "DT" and (prev_tag[0] in ("the", "a")): # the/a before name
-									if i-2 > 0: # check deeper (one more tag back)
-										old_tag = tag_s[i-2]
-										if old_tag[1] == "IN" and (old_tag[0] in ("in", "at", "of")):
+				if not fullname in s: continue # sentence must contain the name
+				
+				name_part = fullname.split(" ")[0]
+				prev_tag = None # previous tag
+				prev_prev_tag = None # more previous than previous
+				
+				for i, (word, tag) in enumerate(tagged_sentences[index]):
+					if word == name_part: # found the name
+						if prev_tag: 
+							# check for IN (which denotes place name instead of person)
+							if prev_tag[1] == "IN" and (prev_tag[0] in ("in", "at", "of")):
+								name_good = False
+								break
+							else:
+								# the name starts with tags: "the"/"a"
+								if prev_tag[1] == "DT" and (prev_tag[0] in ("the", "a")):
+									if prev_prev_tag: # check deeper (one more tag back)
+										# check for IN (which denotes place name instead of person)
+										if prev_prev_tag[1] == "IN" and (prev_prev_tag[0] in ("in", "at", "of")):
 											name_good = False
 											break
-						prev_tag = (word, tag)
-					if name_good != None:
-						break
-						
+					prev_prev_tag = prev_tag
+					prev_tag = (word, tag) #store previous tag for later use
+				if name_good != None:
+					break
+			
+			# check if name is not a contry name
 			#if self.is_city_or_country(fullname) or name_good == False:
 			if name_good == False:
 				print "Removing", fullname, "as not a person detected"
 				del people[fullname]
 	
+	def check_extended_names(self, people, sentences, tagged_sentences):
+		# check that all names found fully found
+		for fullname, data in people.items():			
+			for index, s in enumerate(sentences):
+				if not fullname in s: continue # sentence must contain the name
+				last_name = fullname.split(" ")[-1]
+				tag_s = tagged_sentences[index]
+				
+				complete = False
+				for i, (word, tag) in enumerate(tag_s):
+					if word != last_name:  continue # we're interested in finding last name
+					if len(tag_s) > i+1: # check if next tag starts with hispanic names 
+						next_tag = tag_s[i+1]
+						if next_tag[1] == "IN" and next_tag[0] in ("de"):
+							if len(tag_s) > i+2: # now get the last name attachment
+								next_next_tag = tag_s[i+2]
+								if next_next_tag[1].startswith("N"):
+									del people[fullname]
+									new_fullname = fullname + " " + next_tag[0] + " " + next_next_tag[0]
+									print "Found a spanish name, old name:", fullname,", new fullname:", new_fullname
+									data['shortnames'].append(fullname)
+									data['fullname'] = new_fullname
+									people[fullname] = data
+									complete = True
+									break
+			if complete: break # dont analyze more sentences
+			
 	def find(self, tagged_words, sentences, tagged_sentences):
 		chunked = nltk.chunk.ne_chunk(tagged_words)
 		title_list = []
+		print chunked
 		self.find_names(chunked, title_list)
 		
 		people = self.extract_fullnames(title_list)
 		self.check_names(people, sentences, tagged_sentences)
+		self.check_extended_names(people, sentences, tagged_sentences)
 			
 		# ok, print the info
 		print "People mentioned in article:"
