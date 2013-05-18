@@ -1,4 +1,4 @@
-import nltk, data, summarize, pickle, ner, config, training, sys
+import nltk, data, summarize, pickle, ner, config, training, sys, utils
 from nltk.tree import Tree
 
 WORDS_PICKLE = 'tagged_words.pickle'
@@ -24,15 +24,8 @@ sentences = nltk.tokenize.sent_tokenize(article.text)
 tokenized_sentences = [nltk.tokenize.wordpunct_tokenize(s) for s in sentences] 
 tagged_sentences = [nltk.pos_tag(s) for s in tokenized_sentences]
 
-
-def join_tagged(tagged):
-	s = ""
-	for text, tag in tagged:
-		s += " "+text+"/"+tag
-	return s
-	
 # show the output
-print join_tagged(tagged_words)
+print utils.join_tagged(tagged_words)
 print "-"*80
 print tagged_sentences
 print "-"*80
