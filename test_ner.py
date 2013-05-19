@@ -1,12 +1,9 @@
 import nltk, data, summarize, pickle, ner, config, training, sys, utils
 from nltk.tree import Tree
 
-WORDS_PICKLE = 'tagged_words.pickle'
-SENTENCES_PICKLE = 'tagged_sentences.pickle'
-
 # load article
 print "CLI:",sys.argv
-path = "db/ivonyte-aiste/2011-7-3-1.txt"
+path = "db/barkauskas-povilas/2011-04-02-4.txt" #"db/ivonyte-aiste/2011-7-3-1.txt"
 article = data.Article(path)
 
 print "-"*80
