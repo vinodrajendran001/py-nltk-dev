@@ -13,11 +13,15 @@ class NERFinder:
 			self.female = {line.strip().lower():True for line in fp}
 		# load cities/countries
 		self.cities = city_db.CityChecker()
-	
-	def name_in_db(self, name):
-		lowcase = name.lower()
-		if lowcase in self.male: return (True, "male")
-		if lowcase in self.female: return (True, "female")
+
+	def name_in_db(self, check):
+		lowcase = check.lower()
+		for name in self.male:
+			if name.lower().startswith(lowcase):
+				return (True, "male")
+		for name in self.female:
+			if name.lower().startswith(lowcase):
+				return (True, "female")
 		return (False, None)
 		
 	def is_country_or_city(self, name):
