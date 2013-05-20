@@ -10,6 +10,14 @@ print "-"*80
 print article.text
 print "-"*80
 
+def create_summary(tree, summary):
+  if tree.node == "VEIKSNYS" or tree.node == "TARINYS" or tree.node == "OBJEKTAS" or tree.node == "IVARDIS":
+    summary.append([e[0] for e in tree])
+  else:
+    for ent in tree:
+      if type(ent) == Tree:
+        create_summary(ent, summary)
+
 def check_gender(tag, gender):
   if (tag.lower() == 'she' and gender == 'female') or (tag.lower() == 'he' and gender == 'male'):
     return True
@@ -101,14 +109,20 @@ grammar = r"""
 # do our custom chunking, because regular one is too mainstream :D
 cp = nltk.RegexpParser(grammar) 
 
-anaphora_finder(tagged_sentences, people)
+#anaphora_finder(tagged_sentences, people)
+summary = []
 
 start = 0
 end = 15
 for index, sentence in enumerate(tagged_sentences):
-	chunked_sentence = cp.parse(sentence) 
-	if index < end and index >= start:
-		print "[",index,"] oooo", sentences[index]
-		print
-		print "[",index,"] ####", chunked_sentence
-	
+  chunked_sentence = cp.parse(sentence) 
+  if index < end and index >= start:
+	 print "[",index,"] oooo", sentences[index]
+	 print
+	 print "[",index,"] ####", chunked_sentence
+  create_summary(chunked_sentence, summary)
+  summary.append(".")
+
+print "Summary:"
+for item in summary:
+  print item
