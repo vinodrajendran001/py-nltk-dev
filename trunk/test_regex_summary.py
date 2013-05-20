@@ -11,7 +11,8 @@ print article.text
 print "-"*80
 
 def create_summary(tree, summary):
-  if tree.node == "VEIKSNYS" or tree.node == "TARINYS" or tree.node == "OBJEKTAS" or tree.node == "IVARDIS":
+  if tree.node == "VEIKSNYS" or tree.node == "TARINYS" or tree.node == "OBJEKTAS" \
+  or tree.node == "IVARDIS" or tree.node == "APLINKYBES":
     summary.append([e[0] for e in tree])
   else:
     for ent in tree:
