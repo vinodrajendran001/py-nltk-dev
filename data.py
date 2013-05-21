@@ -42,18 +42,11 @@ class Article:
 		self.cats = cleaned
 		self.text = (" ".join(lines[4:])).strip() # join all left text lines to a single line string
 		self.text = removeNonAscii(self.text)
-		
-		#print "loaded file: %s, categories: %d, text: %d, date: %s, index: %s" % (self.filename, len(self.cats), len(self.text), self.date, self.no)
-		# debug print
-		'''print self.url
-		print
-		print self.title
-		print
-		print self.year, self.month, self.day, "#"+self.no
-		print
-		print self.cats
-		print
-		print self.text'''
+
+	def show(self):
+		print "-"*80
+		print self.text
+		print "-"*80
 		
 # assigns the class to an article by analyzing its categories
 def determine_class(article, top5):
