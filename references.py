@@ -1,8 +1,8 @@
 # --------------------------------------------------------------------------------------------
 # Code below resolves references based on simple mentioned male/female entity memory scheme:
-# 	1. parse every sentence for person & PRP 
-#   2. determine person's sex & store him/her as last one mentioned (separate for male/female)
-#   3. if PRP is found, then based on sex & last memorized person the PRP is assigned to the person name
+# 	1. Parse every sentence - find person & PRP tags
+#   2. Determine person's sex & store him/her as last one mentioned (separate memory for male/female)
+#   3. If PRP is found, then based on sex & last memorized person the person name is assigned to the PRP 
 # --------------------------------------------------------------------------------------------
 
 class References:
@@ -34,14 +34,8 @@ class References:
 				else:
 					sent.append((word.lower(), tag, 'o', None)) # not a name - mark as `o`
 			new_tagged_sentences.append(sent)
-
-		# show debug texts
-		#print new_tagged_sentences
-		#print "-"*80
-		#print article.text
-		#print "-"*80
 		
-		# store references as: PRP, fullname, sentence_index
+		# store references as lists: [PRP, fullname, sentence_index]
 		refs = []
 
 		# store last he & she while scanning sentences, 
