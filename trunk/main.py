@@ -9,15 +9,15 @@ def print_to_screen_and_file(text):
 	else:
 		fp.write(text)
 		fp.write("\n")
+		fp.flush()
 
 def run(path):
 	global fp 
-	MAX_SENTENCES = config.MAX_SENTENCES	
 
 	if len(path) == 0:
 		path = "db/ivonyte-aiste/2011-7-8-1.txt" 
+	
 	# load article text
-
 	article = data.Article(path)
 	utils.load_data(article.text)
 	
@@ -32,7 +32,7 @@ def run(path):
 	# make the summary & show in console
 	print_to_screen_and_file("I Summary:")
 	instance = summarize.SimpleSummarizer()
-	print_to_screen_and_file(instance.summarize(article.text, MAX_SENTENCES))
+	print_to_screen_and_file(instance.summarize(article.text, config.MAX_SENTENCES))
 	print_to_screen_and_file("-"*80)
 
 	print_to_screen_and_file("II Summary:")
@@ -48,7 +48,8 @@ def run(path):
 
 	print_to_screen_and_file("Anaphoras:")
 	refs = references.References().find(utils.people, utils.sentences, utils.tagged_sentences)
-	print_to_screen_and_file(refs)
+	for ref, fullname, index in refs:
+		fp.write("Sentence["+str(index+1)+"]: " + ref + " - "+fullname+"\n")
 	print_to_screen_and_file("-"*80)
 
 	print_to_screen_and_file("People interactions:")
@@ -63,6 +64,3 @@ if __name__ == "__main__":
 
 	path = "db/ivonyte-aiste/2011-7-8-1.txt" 
 	run(path)
-
-	#else:
-	
