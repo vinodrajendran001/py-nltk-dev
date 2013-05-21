@@ -7,6 +7,7 @@ TEST_FILE = "testing_set.dat"		  # list of article filenames for testing
 DIRECTORY = "db" 					  # root directory to parse for files
 TRAINING_SET_SIZE = 20 				  # percentage of training set size
 MAX_TRAINING_ITERS = 5				  # number of MaxEntClassifier iteration before stopping
+MAX_SENTENCES = 6					  # max sentences for simple summarizer
 CLASSIFIER_FILE = 'classifier.pickle' # dump pickled classifier to this file
 MALE_NAME_FILE = "archives/male.txt"
 FEMALE_NAME_FILE = "archives/female.txt"
