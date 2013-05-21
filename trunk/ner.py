@@ -113,10 +113,20 @@ class NERFinder:
 					break
 			
 			# check if name is not valid or is a country/city name
-			if self.is_country_or_city(fullname) or self.is_generic_word(fullname) or name_good == False:
-				print "Removing", fullname, "as not a person detected"
+			rem = False
+			if data["sex"] == "?": # only check if it's not known in names DB
+				if self.is_country_or_city(fullname):
+					print "Removing", fullname, "as not a person detected - city/country"
+					rem = True
+				elif self.is_generic_word(fullname):
+					print "Removing", fullname, "as not a person detected - generic word"
+					rem = True
+				elif name_good == False:
+					print "Removing", fullname, "as not a person detected - not good"
+					rem = True
+			
+			if rem:
 				del people[fullname]
-		print" "
 	
 	def check_extended_names(self, people, sentences, tagged_sentences):
 		# check that all names found are full (e.g. spanish middle names & etc.)
