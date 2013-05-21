@@ -5,7 +5,7 @@ print "CLI:",sys.argv
 path = "db/ivonyte-aiste/2011-7-3-1.txt"
 article = data.Article(path)
 article.show()
-utils.load_data()
+utils.load_data(article.text)
 
 # show the output
 print utils.join_tagged(utils.tagged_words)
