@@ -13,7 +13,7 @@ class CustomChunker:
 		  IVARDIS: {<PRP.*><PRP.*>*}
 		  APLINKYBES: {<IN><DT|CD|NN.*|POS|:>*<JJ|NN>*}
 		  VIETA: {<NNP><NN..>+}
-		  TARINYS: {<EX>*<MD>*<RB>?<V.|V..>+<RP>*<IN>*<NP|PP>*<TO>?<RB>?<JJ|NN.*>?<V.|V..>*}
+		  TARINYS: {<EX>*<TO>?<MD>*<RB>?<V.|V..>+<RP>*<IN>*<NP|PP>*<TO>?<RB>?<JJ|NN.*>?<V.|V..>*}
 		  VEIKSNYS: {<DT>?<PRP.*>*<JJ>*<NN.*>+<:>*<POS>*<NN.*>*}
 		  OBJEKTAS: {<NN.>*<:|CD>*<NN.*>*}
 		  PAPILDINYS: {<RB>*<IN>*<DT>*<JJ>*<NN.*>*}
