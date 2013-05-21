@@ -17,10 +17,10 @@ class NERFinder:
 	def name_in_db(self, check):
 		lowcase = check.lower()
 		for name in self.male:
-			if name.lower().startswith(lowcase):
+			if name.startswith(lowcase):
 				return (True, "male")
 		for name in self.female:
-			if name.lower().startswith(lowcase):
+			if name.startswith(lowcase):
 				return (True, "female")
 		return (False, None)
 		
