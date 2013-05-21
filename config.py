@@ -13,4 +13,4 @@ MALE_NAME_FILE = "archives/male.txt"
 FEMALE_NAME_FILE = "archives/female.txt"
 CITY_DB_FILE = 'archives/city.db'
 COUNTRY_FILE = 'archives/country.txt'
-EN_DICTIONARY = 'archives/en_dictionary.txt'
+EN_DICTIONARY = 'archives/en_dictionary_no_names.txt' #'archives/en_dictionary.txt'
