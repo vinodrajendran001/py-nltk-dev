@@ -13,6 +13,9 @@ class NERFinder:
 			self.female = {line.strip().lower():True for line in fp}
 		# load cities/countries
 		self.cities = city_db.CityChecker()
+		# load dictionary
+		with open(config.EN_DICTIONARY) as fp:
+			self.dictionary = {line.strip().lower():True for line in fp}
 
 	def name_in_db(self, check):
 		lowcase = check.lower()
@@ -26,6 +29,9 @@ class NERFinder:
 		
 	def is_country_or_city(self, name):
 		return (self.cities.hasCity(name) or self.cities.hasCountry(name))
+		
+	def is_generic_word(self, name):
+		return (name.lower() in self.dictionary)
 		
 	def find_names(self, tree, peeps):
 		if tree.node == "PERSON":
@@ -107,7 +113,7 @@ class NERFinder:
 					break
 			
 			# check if name is not valid or is a country/city name
-			if self.is_country_or_city(fullname) or name_good == False:
+			if self.is_country_or_city(fullname) or self.is_generic_word(fullname) or name_good == False:
 				print "Removing", fullname, "as not a person detected"
 				del people[fullname]
 		print" "
