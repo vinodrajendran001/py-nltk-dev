@@ -4,7 +4,7 @@ from nltk.tree import Tree
 # show commandline arguments
 print "CLI:", sys.argv
 
-path = "db/ivonyte-aiste/2011-7-3-1.txt"
+path = "db/uktveris-tomas/2010-12-20-10.txt"
 article = data.Article(path)
 print "-"*80
 print article.text
@@ -99,7 +99,7 @@ for index, sentence in enumerate(new_tagged_sentences):
 		word, tag, flag, data = element # unpack all data
 		word_index += 1 # increase processed words index
 		
-		if tag.startswith("PRP") and len(word) <= 5: # reference was found!
+		if tag.startswith("PRP") and len(word) <= 5 and (word not in ("it", "our", "their", "us", "its", "we", "they")): # a determined reference was found!
 			### unknown sex resolver
 			if last_unknown[0]: # if we have an unknown name without sex, then assign the next first found sex to it
 				gender = get_gender(word)
