@@ -12,6 +12,25 @@ def join_tagged(tagged):
 	for text, tag in tagged:
 		s += " "+text+"/"+tag
 	return s
+	
+# extracts features from text - here the features are the words themselves
+def bag_of_words(tokens, text, stemmer):
+	bag = {}
+	for t in tokens:
+		t_lower = t.lower()
+		if len(t) > 1:
+			bag[stemmer.lemmatize(t_lower)] = True
+			''' disabled features, as they just lower the accuracy of the classifier
+			bag['starts with %c'%t_lower[0]] = True
+			bag['ends with %c'%t_lower[-1]] = True
+			pos = text.index(t)
+			if pos > 0:
+			bag['%s after %s'%(t_lower, text[pos-1].lower())] = True
+			if pos+1 < len(text):
+			bag['%s after %s'%(text[pos+1].lower(), t_lower)] = True
+			if pos > 0 and pos+1 < len(text):
+			bag['3gram(%s %s %s)'%(text[pos-1].lower(), t_lower, text[pos+1].lower())] = True'''
+	return bag
 
 def load_data(article_text):
 	global tagged_words, tagged_sentences, people, sentences

@@ -1,23 +1,4 @@
-import nltk, pickle, config, data, random, sys
-
-# extracts features from text - here the features are the words themselves
-def bag_of_words(tokens, text, stemmer):
-	bag = {}
-	for t in tokens:
-		t_lower = t.lower()
-		if len(t) > 1:
-			bag[stemmer.lemmatize(t_lower)] = True
-			''' disabled features, as they just lower the accuracy of the classifier
-			bag['starts with %c'%t_lower[0]] = True
-			bag['ends with %c'%t_lower[-1]] = True
-			pos = text.index(t)
-			if pos > 0:
-			bag['%s after %s'%(t_lower, text[pos-1].lower())] = True
-			if pos+1 < len(text):
-			bag['%s after %s'%(text[pos+1].lower(), t_lower)] = True
-			if pos > 0 and pos+1 < len(text):
-			bag['3gram(%s %s %s)'%(text[pos-1].lower(), t_lower, text[pos+1].lower())] = True'''
-	return bag
+import nltk, pickle, config, data, random, sys, utils
 
 def load_samples(sample_list, stemmer, max_words):
 	data_set = []
@@ -30,7 +11,7 @@ def load_samples(sample_list, stemmer, max_words):
 		if len(tokens) > max_words: # limit to max most frequent words per article
 			tokens = tokens[:max_words]
 		
-		data_set.append((bag_of_words(tokens, words, stemmer), category))
+		data_set.append((utils.bag_of_words(tokens, words, stemmer), category))
 	random.shuffle(data_set)
 	return data_set
 	
@@ -54,19 +35,25 @@ def run(classifier, max_words):
 	instance = None
 	if classifier == nltk.classify.NaiveBayesClassifier:
 		instance = nltk.classify.NaiveBayesClassifier.train(training_set)
+		# serialize the classifer to file (for later use)
+		with file(config.BAYES_CLASSIFIER_FILE, 'wb') as fp:
+			pickle.dump(instance, fp)
 	elif classifier == nltk.classify.MaxentClassifier:
 		instance = nltk.classify.MaxentClassifier.train(training_set, max_iter=config.MAX_TRAINING_ITERS)
+		# serialize the classifer to file (for later use)
+		with file(config.MAXENT_CLASSIFIER_FILE, 'wb') as fp:
+			pickle.dump(instance, fp)
 	elif classifier == nltk.classify.DecisionTreeClassifier:
 		instance = nltk.classify.DecisionTreeClassifier.train(training_set, binary=False)
-		
-	# serialize the classifer to file (for later use)
-	with file(config.CLASSIFIER_FILE, 'wb') as fp:
-		pickle.dump(instance, fp)
+		# serialize the classifer to file (for later use)
+		with file(config.DTREE_CLASSIFIER_FILE, 'wb') as fp:
+			pickle.dump(instance, fp)
 
 	# test classifier accuracy with the test set
 	print "Evaluating classifier accuracy..."
 	accuracy = nltk.classify.util.accuracy(instance, testing_set)
 	print "Classifier accuracy:", accuracy
+	
 	if  classifier != nltk.classify.DecisionTreeClassifier:
 		instance.show_most_informative_features(10)
 	else:

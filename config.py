@@ -8,7 +8,12 @@ DIRECTORY = "db" 					  # root directory to parse for files
 TRAINING_SET_SIZE = 20 				  # percentage of training set size
 MAX_TRAINING_ITERS = 5				  # number of MaxEntClassifier iteration before stopping
 MAX_SENTENCES = 6					  # max sentences for simple summarizer
-CLASSIFIER_FILE = 'classifier.pickle' # dump pickled classifier to this file
+
+# dump pickled classifier to this file
+BAYES_CLASSIFIER_FILE = 'bayes_classifier.pickle'
+MAXENT_CLASSIFIER_FILE = 'maxent_classifier.pickle'
+DTREE_CLASSIFIER_FILE = 'dtree_classifier.pickle'
+
 MALE_NAME_FILE = "archives/male.txt"
 FEMALE_NAME_FILE = "archives/female.txt"
 CITY_DB_FILE = 'archives/city.db'
