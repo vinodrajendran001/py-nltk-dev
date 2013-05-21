@@ -30,3 +30,7 @@ print "-"*80
 # do the magic - find named entities
 instance  = ner.NERFinder()
 people = instance.find(tagged_words, sentences, tagged_sentences)
+
+# show found people in the article
+for i, (key, value) in enumerate(people.items()):
+	print "[%d] - %s = %s"%(i+1, key, value)
