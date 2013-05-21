@@ -22,5 +22,5 @@ class CustomChunker:
 		  """
 		self.parser = nltk.RegexpParser(grammar)
 		
-	def parse(self, tagged_sentence):
-		return self.parser.parse(tagged_sentence)
+	def parse(self, tagged_words):
+		return self.parser.parse(tagged_words)
