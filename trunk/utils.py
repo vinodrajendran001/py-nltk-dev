@@ -1,4 +1,4 @@
-import sys, pickle
+import sys, pickle, nltk, ner
 
 tagged_words = None
 tagged_sentences = None
@@ -13,19 +13,19 @@ def join_tagged(tagged):
 		s += " "+text+"/"+tag
 	return s
 
-def load_data():
+def load_data(article_text):
 	global tagged_words, tagged_sentences, people, sentences
 	# we give parameter to load everything from file and to save some time :) 
 	if "-f" in sys.argv:
 	  # tokenize & tag all words in article
 	  print "Tokenizing & tagging words..."
-	  tokens = nltk.tokenize.wordpunct_tokenize(article.text)
+	  tokens = nltk.tokenize.wordpunct_tokenize(article_text)
 	  tagged_words = nltk.pos_tag(tokens)
 	  pickle.dump(tagged_words, file('tagged_words.pickle', 'w'))
 
 	  # extract & tokenize each sentence separately
 	  print "Tokenizing & tagging sentences..."
-	  sentences = nltk.tokenize.sent_tokenize(article.text)
+	  sentences = nltk.tokenize.sent_tokenize(article_text)
 	  pickle.dump(sentences, file('sentences.pickle', 'w'))
 	  
 	  tokenized_sentences = [nltk.tokenize.wordpunct_tokenize(s) for s in sentences]
