@@ -110,6 +110,7 @@ class NERFinder:
 			if self.is_country_or_city(fullname) or name_good == False:
 				print "Removing", fullname, "as not a person detected"
 				del people[fullname]
+		print" "
 	
 	def check_extended_names(self, people, sentences, tagged_sentences):
 		# check that all names found are full (e.g. spanish middle names & etc.)
@@ -149,9 +150,9 @@ class NERFinder:
 		self.check_extended_names(people, sentences, tagged_sentences)
 			
 		# ok, print the info
-		print "People mentioned in article:"
-		for i, (fullname, data) in enumerate(people.items()):
-			print "\t%d. %s ="%(i+1, fullname), data
+		#print "People mentioned in article:"
+		#for i, (fullname, data) in enumerate(people.items()):
+		#	print "\t%d. %s ="%(i+1, fullname), data
 		#index = self.find_sentence(fullname, tagged_sentences)
 		
 		return people

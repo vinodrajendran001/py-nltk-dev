@@ -4,7 +4,7 @@ from nltk.tree import Tree
 # show commandline arguments
 print "CLI:", sys.argv
 
-path = "db/ivonyte-aiste/2011-7-3-1.txt"
+path = "db/barkauskas-povilas/2011-04-11-5.txt"
 article = data.Article(path)
 print "-"*80
 print article.text
@@ -113,8 +113,8 @@ cp = nltk.RegexpParser(grammar)
 #anaphora_finder(tagged_sentences, people)
 summary = []
 
-start = 0
-end = 15
+start = 5
+end = 35
 for index, sentence in enumerate(tagged_sentences):
   chunked_sentence = cp.parse(sentence) 
   if index < end and index >= start:
@@ -124,6 +124,10 @@ for index, sentence in enumerate(tagged_sentences):
   create_summary(chunked_sentence, summary)
   summary.append(".")
 
+#TODO: make it nice looking text
 print "Summary:"
 for item in summary:
-  print item
+  bag = ""
+  for element in item:
+    bag += "".join(element)
+  #print bag #type(item), item #bag #" ".join(bag)
