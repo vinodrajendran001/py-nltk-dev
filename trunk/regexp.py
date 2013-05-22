@@ -11,14 +11,15 @@ class CustomChunker:
 		
 		grammar = r"""
 		  IVARDIS: {<PRP.*><PRP.*>*}
-		  APLINKYBES: {<IN><DT|CD|NN.*|POS|:>*<JJ|NN>*}
+		  APLINKYBES: {<IN>+<DT|CD|NN.*|POS|,>*<JJ|JJ.|NN>*<RB.*>*}
 		  VIETA: {<NNP><NN..>+}
 		  TARINYS: {<EX>*<TO>?<MD>*<RB>?<V.|V..>+<RP>*<IN>*<NP|PP>*<TO>?<RB>?<JJ|NN.*>?<V.|V..>*}
-		  VEIKSNYS: {<DT>?<PRP.*>*<JJ>*<NN.*>+<:>*<POS>*<NN.*>*}
-		  OBJEKTAS: {<NN.>*<:|CD>*<NN.*>*}
-		  PAPILDINYS: {<RB>*<IN>*<DT>*<JJ>*<NN.*>*}
+		  VEIKSNYS: {<NN.*>?<DT>?<CD>?<PRP.*>*<JJ|JJ.>*<TO>?<NNP>+<:>*<POS>*<NNP*>*}
+		  OBJEKTAS: {<DT>?<NN.>*<CD>*<:|CD|\.>*<NN.*>*}
+		  PAPILDINYS: {<RB|RB.>*<IN>*<DT>*<JJ>*<NN.*>*}
 		  JUNGTUKAS: {<CC>}
 		  S_SAK: {<WRB|WDT>}
+		  ?: {<.|..|...>*}
 		  """
 		self.parser = nltk.RegexpParser(grammar)
 		
