@@ -84,7 +84,13 @@ def run():
 	for i, (catname, count) in enumerate(top):
 		top[i] = [catname, count, tags[i]]
 	
-	print "Top 5 categories (name, frequency):\n", top
+	print "-"*80
+	print "Top 5 categories: Name, frequency and tag assigned:"
+	for i, item in enumerate(top):
+		#print "\t%d. %s ="%(i+1, fullname), data
+		print "\t%d. %s"%(i+1, item)
+	print "-"*80
+
 	with open(config.TOP5_CATEGORIES, "wt") as fp:
 		fp.write(pickle.dumps(top));
 		

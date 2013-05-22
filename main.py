@@ -55,7 +55,7 @@ def run(path):
 	answer = classifier.classify(feats)
 	print_to_screen_and_file("DecisionTreeClassifier class: "+answer)
 	print_to_screen_and_file("-"*80)
-
+	
 	# people actions
 	print_to_screen_and_file("People and their actions:")
 	work = action.Actions().find(utils.tagged_words, utils.tagged_sentences, utils.people)
