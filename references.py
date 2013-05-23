@@ -1,3 +1,5 @@
+import utils
+
 # --------------------------------------------------------------------------------------------
 # Code below resolves references based on simple mentioned male/female entity memory scheme:
 # 	1. Parse every sentence - find person & PRP tags
@@ -13,15 +15,7 @@ class References:
 	
 	def find(self, people, sentences, tagged_sentences):
 		# create a all possible lowercase names & drink beer later :P
-		names = {}
-		for i, (fullname, data) in enumerate(people.items()):
-			for shortname in data['shortnames']:
-				for s in shortname.lower().split(" "):
-					names[s] = data
-				names[shortname.lower()] = data
-			for shortname in fullname.lower().split(" "):
-				names[shortname] = data
-			names[fullname.lower()] = data
+		names = utils.get_names_dict(people)
 
 		# find names in text and mark them with special symbols & append additional data
 		new_tagged_sentences = []

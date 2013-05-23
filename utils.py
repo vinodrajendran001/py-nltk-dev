@@ -1,4 +1,5 @@
 import sys, pickle, nltk, ner
+from nltk.tree import Tree
 
 tagged_words = None
 tagged_sentences = None
@@ -31,7 +32,31 @@ def bag_of_words(tokens, text, stemmer):
 			if pos > 0 and pos+1 < len(text):
 			bag['3gram(%s %s %s)'%(text[pos-1].lower(), t_lower, text[pos+1].lower())] = True'''
 	return bag
-
+	
+def get_names_dict(people):
+	names = {}
+	for i, (fullname, data) in enumerate(people.items()):
+		for shortname in data['shortnames']:
+			for s in shortname.lower().split(" "):
+				names[s] = data
+			names[shortname.lower()] = data
+		for shortname in fullname.lower().split(" "):
+			names[shortname] = data
+		names[fullname.lower()] = data
+	return names
+	
+def _depth_retag(what, node_tag, bag):
+	if type(what) == Tree:
+		for leaf in what:
+			_depth_retag(leaf, what.node, bag)
+	else:
+		bag.append((what[0],what[1],node_tag))
+	
+def retag_chunked(chunked_sentence):
+	retaged = []
+	_depth_retag(chunked_sentence, None, retaged)
+	return retaged
+		
 def load_data(article_text):
 	global tagged_words, tagged_sentences, people, sentences
 	# we give parameter to load everything from file and to save some time :) 

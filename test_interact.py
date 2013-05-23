@@ -30,20 +30,38 @@ for i, (key, value) in enumerate(utils.people.items()):
 refs = references.References().find(utils.people, utils.sentences, utils.tagged_sentences)
 print refs # [PRP, fullname, sentence_index]
 
-chunked = regexp.CustomChunker().parse(utils.tagged_words)
-#print chunked
+article.show()
 
-#TODO: parse chunked text for PRP and - 3, 
-# find PRP, VRB, PRP for - 1
-# memory for people (they) - 2
-# utility to check if person is mentioned in sentence & find it (see references.py)
+names = utils.get_names_dict(utils.people)
+
+# TODO: parse chunked text for PRP - 3
+# 		find PRP/name, VRB, PRP/name for - 1
+# 		memory for people: name/name/name/... (they did) - 2
+print "Interactions:" 
+
 for index, sentence in enumerate(utils.tagged_sentences):
-	prp = [] # gather PRP into a list
-	for word, tag in sentence:
-		if tag.startswith("PRP"):
-			print word
-			prp.append([word, tag])
-	print prp
+	chunked_sentence = regexp.CustomChunker().parse(sentence)
+	retaged_sentence = utils.retag_chunked(chunked_sentence)
+	what = []
+	who = []
+	for (word, tag, piece) in retaged_sentence:
+		w = word.lower()
+		if tag.startswith("PRP"): # this is a reference
+			if (w in ("he", "she", "they", "them", "his", "her", "their", "our", "i", "we")):
+				who.append(word)
+		elif w in names: # this word belongs to a person name
+			who.append(word)
+		elif piece in ('TARINYS'):
+			what.append(word)
 		
+		#TODO: concatenate multi tarinys to one
+		#TODO: full name recognition
+		#TODO: replace PRP with fullnames, check if same  & only person is not used >1 in same sentence, if so - don't print
+		#TODO: add some details to extracted actions
+		
+	if len(who) > 1  and len(what) > 0: # only show people & interactions that include an action 
+		print ", ".join(who), "-", ", ".join(what)
 	
+		
+		
 		
