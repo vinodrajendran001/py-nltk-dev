@@ -49,7 +49,7 @@ class NERFinder:
 				print "rejected long name title:", titles
 				continue # reject names longer than 3 ids 
 			name = " ".join(titles)
-			names_list[name] = {'sex':'?', 'fullname':name, 'shortnames':[]}
+			names_list[name] = {'sex':'?', 'fullname':name, 'shortnames':[], 'sentence':set()}
 		
 		# some formed names are shortened versions(or names w/o surnames) - aggregate
 		unique_names = []
@@ -164,6 +164,17 @@ class NERFinder:
 		people = self.extract_fullnames(title_list)
 		self.validate_names(people, sentences, tagged_sentences)
 		self.check_extended_names(people, sentences, tagged_sentences)
+		
+		# gather sentence list where the names are
+		for fullname, data in people.items():
+			for index, s in enumerate(sentences):
+				if fullname in s:
+					data['sentence'].add(index)
+					continue
+				for short in data['shortnames']:
+					if short in s:
+						data['sentence'].add(index)
+						break
 			
 		# ok, print the info
 		#print "People mentioned in article:"
