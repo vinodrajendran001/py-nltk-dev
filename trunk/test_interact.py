@@ -1,4 +1,4 @@
-import data, sys, utils, references, regexp
+import data, sys, utils, references, regexp, interactions
 
 # show commandline arguments
 print "CLI:", sys.argv
@@ -19,73 +19,17 @@ print "-"*80
 for i, (key, value) in enumerate(utils.people.items()):
 	print "[%d] - %s = %s"%(i+1, key, value)
 
-'''
-	Asmenu saveikos (ATVEJAI):
-		1) Ivardis, Tarinys, Ivardis
-		2) Ivardis (THEY), Tarinys (anksciau pamineti vardaI)
-		3) Objektas, Tarinys, Aplinkybe (su vardu)
-'''
-
 # find the references
 refs = references.References().find(utils.people, utils.sentences, utils.tagged_sentences)
-print refs # [PRP, fullname, sentence_index]
+print refs
 
-ref_dict = {} # reference map by sentence index
-for prp, fullname, index in refs:
-	if index not in ref_dict:
-		ref_dict[index] = [prp, fullname, index]
-	else:
-		ref_dict[index].append([prp, fullname, index])
+# find people interactions
+interact = interactions.Interactor().find(refs, utils.tagged_sentences)
 
-article.show()
-
-names = utils.get_names_dict(utils.people)
-
-# TODO: 
-# 		find PRP/name, VRB, PRP/name for - 1
-# 		memory for people: name/name/name/... (they did) - 2
-
-interact = []
-for index, sentence in enumerate(utils.tagged_sentences):
-	chunked_sentence = regexp.CustomChunker().parse(sentence)
-	
-	retaged_sentence = utils.retag_chunked(chunked_sentence)
-	new_tagged_sentence = utils.mark_sentence_names(retaged_sentence, names)
-	
-	#TODO: add some details to extracted actions
-	# find prepositions, replace with real names and print what they did
-	who, what, prp, seq = [], [], [], []
-	prp_counter = 0
-	for (word, tag, piece, pt) in new_tagged_sentence:
-		reset = True
-		w = word.lower()
-		if tag.startswith("PRP"): # this is a reference
-			if (w in ("he", "she", "his", "him", "her", "i", "me", "our")):
-				if index in ref_dict[index]:
-					who.append(ref_dict[index][1]) # PRP-person mapping exists
-					prp.append(word)
-				else:
-					who.append(None) # PRP exists without mapped person
-					prp.append(word)
-		elif w in names: 
-			# this word belongs to a person name, there's no PRP for it
-			who.append(word)
-			prp.append(None)
-		elif piece in ('TARINYS'): 
-			reset = False
-			seq.append(word) 
-			
-		if reset and len(seq) > 0: # join neighbouring verbs if possible
-			what.append(" ".join(seq))
-			seq = []
-	
-	if len(who) > 1 and len(what) > 0: # only show people & their interactions that include an action
-		# capitalize each person name/surname first letter
-		for i, boo in enumerate(who):
-			who[i] = " ".join([part[0].upper()+part[1:] for part in boo.split(" ")])
-		interact.append({'who':who, 'prp': prp, 'what':what})
-
+print "-"*80
 print "Interactions:"
+print "-"*80
+
 for index, item in enumerate(interact):
 	who, prp, what = item['who'], item['prp'], item['what']
 	s = "["+str(index+1)+"]:"
