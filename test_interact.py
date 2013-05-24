@@ -30,6 +30,13 @@ for i, (key, value) in enumerate(utils.people.items()):
 refs = references.References().find(utils.people, utils.sentences, utils.tagged_sentences)
 print refs # [PRP, fullname, sentence_index]
 
+ref_dict = {} # reference map by sentence index
+for prp, fullname, index in refs:
+	if index not in ref_dict:
+		ref_dict[index] = [prp, fullname, index]
+	else:
+		ref_dict[index].append([prp, fullname, index])
+
 article.show()
 
 names = utils.get_names_dict(utils.people)
@@ -41,26 +48,38 @@ print "Interactions:"
 
 for index, sentence in enumerate(utils.tagged_sentences):
 	chunked_sentence = regexp.CustomChunker().parse(sentence)
+	
 	retaged_sentence = utils.retag_chunked(chunked_sentence)
-	what = []
-	who = []
-	for (word, tag, piece) in retaged_sentence:
+	new_tagged_sentence = utils.mark_sentence_names(retaged_sentence, names)
+	
+	# find prepositions, replace with real names and print what they did
+	who, what, seq = [], [], []
+	prp_counter = 0
+	for (word, tag, piece, pt) in new_tagged_sentence:
+		reset = True
 		w = word.lower()
 		if tag.startswith("PRP"): # this is a reference
-			if (w in ("he", "she", "they", "them", "his", "her", "their", "our", "i", "we")):
-				who.append(word)
+			if (w in ("he", "she", "his", "him", "her", "i", "me", "our")):
+				if index in ref_dict[index]:
+					who.append([word, ref_dict[index][1]])
+				else:
+					who.append([word, None])
 		elif w in names: # this word belongs to a person name
-			who.append(word)
-		elif piece in ('TARINYS'):
-			what.append(word)
-		
-		#TODO: concatenate multi tarinys to one
-		#TODO: full name recognition
-		#TODO: replace PRP with fullnames, check if same  & only person is not used >1 in same sentence, if so - don't print
-		#TODO: add some details to extracted actions
-		
-	if len(who) > 1  and len(what) > 0: # only show people & interactions that include an action 
-		print ", ".join(who), "-", ", ".join(what)
+			who.append([None, word])
+		elif piece in ('TARINYS'): 
+			reset = False
+			seq.append(word) 
+			
+		if reset and len(seq) > 0: # join neighbouring verbs if possible
+			what.append(" ".join(seq))
+			seq = []
+	
+	#TODO: add some details to extracted actions
+	if len(who) > 1  and len(what) > 0: # only show people & interactions that include an action
+		caps = [] # capitalize each person name
+		for cap in who:
+			caps.append(" ".join([e[0].upper()+e[1:] for e in cap.split(" ")]))
+		print ", ".join(caps), "-", ", ".join(what)
 	
 		
 		
