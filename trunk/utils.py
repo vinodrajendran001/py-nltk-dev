@@ -45,6 +45,32 @@ def get_names_dict(people):
 		names[fullname.lower()] = data
 	return names
 	
+def mark_sentence_names(tag_sentences, names_list):
+	# concatenate names to fullnames 
+	fname = []; renamed = []
+	for (word, tag, piece) in tag_sentences:
+		w = word.lower()
+		if w in names_list:
+			if len(fname) > 0: # check if from same name, if not append & then separate!
+				data = names_list[fname[-1]]
+				if data['fullname'] != names_list[w]['fullname']:
+					renamed.append((" ".join(fname), "NNP", "VEIKSNYS", "+"))
+					fname = []
+				fname.append(w)
+			else:
+				fname.append(w) # first name, so append it without any hassle
+		else:
+			# include any previous names (if any)
+			if len(fname) > 0:
+				renamed.append((" ".join(fname), "NNP", "VEIKSNYS", "+"))
+				fname = []
+			# not a name word reached, add it to list
+			renamed.append((w, tag, piece, "o"))
+	#print fname
+	if len(fname) > 0: # check some that was not left behind - include it
+		renamed.append((" ".join(fname), "NNP", "VEIKSNYS", "+"))
+	return renamed
+	
 def _depth_retag(what, node_tag, bag):
 	if type(what) == Tree:
 		for leaf in what:
