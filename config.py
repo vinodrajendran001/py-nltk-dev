@@ -7,7 +7,7 @@ TEST_FILE = "testing_set.dat"		  # list of article filenames for testing
 DIRECTORY = "db" 					  # root directory to parse for files
 TRAINING_SET_SIZE = 20 				  # percentage of training set size
 MAX_TRAINING_ITERS = 5				  # number of MaxEntClassifier iteration before stopping
-MAX_SENTENCES = 6					  # max sentences for simple summarizer
+MAX_SENTENCES = 6					  # max sentences for simple summarizer -> changed to one third of the original article lenght
 
 # dump pickled classifier to this file
 BAYES_CLASSIFIER_FILE = 'bayes_classifier.pickle'
