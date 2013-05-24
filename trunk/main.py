@@ -12,16 +12,9 @@ def print_to_screen_and_file(text):
 		fp.write(text+"\n")
 		fp.flush()
 
-def get_categories(article):
-	categories = []
-	#lets get all the categories from the article
-
 def run(path):
-	global fp 
+	global fp
 
-	#if len(path) == 0:
-	#	path = "db/ivonyte-aiste/2011-7-8-1.txt" 
-	
 	# load article text
 	article = data.Article(path)
 	utils.load_data(article.text)
@@ -39,6 +32,7 @@ def run(path):
 	print_to_screen_and_file("I Summary:")
 	print_to_screen_and_file("")
 	instance = SimpleSummarizer()
+	# shorten the original article by one third
 	print_to_screen_and_file(instance.summarize(article.text, len(utils.sentences) / 3))
 	print_to_screen_and_file("-"*80)
 
@@ -46,7 +40,7 @@ def run(path):
 	print_to_screen_and_file("II Summary:")
 	print_to_screen_and_file("")
 	#print_to_screen_and_file(test_regex_summary.get_summary(path))
-	print "".join(ph_reduction.PhraseReductor().find(utils.tagged_sentences))
+	print " ".join(ph_reduction.PhraseReductor().find(utils.tagged_sentences))
 	print_to_screen_and_file("-"*80)
 	
 	# classification
@@ -63,9 +57,6 @@ def run(path):
 	classifier = pickle.load(file(config.DTREE_CLASSIFIER_FILE))
 	print_to_screen_and_file("DecisionTreeClassifier class: " + classifier.classify(feats))
 	print_to_screen_and_file("-"*80)
-	
-	print_to_screen_and_file("Actual categories of the article:")
-	print "To come..."
 
 	# people actions
 	print_to_screen_and_file("People and their actions:")
@@ -79,7 +70,7 @@ def run(path):
 	print_to_screen_and_file("Anaphoras:")
 	refs = references.References().find(utils.people, utils.sentences, utils.tagged_sentences)
 	for ref, fullname, index in refs:
-		fp.write("Sentence["+str(index+1)+"]: " + ref + " - "+fullname+"\n")
+		fp.write("Sentence["+str(index+1)+"]: " + ref + " - "+ fullname + "\n")
 	print_to_screen_and_file("-"*80)
 
 	# interactions
@@ -90,8 +81,10 @@ def run(path):
 
 # script start spot
 if __name__ == "__main__":
-	#path = sys.argv[1]
-	#print path
-
-	path = "db/kubilius-algirdas/2010-02-05-8.txt" 
-	run(path)
+	if len(sys.argv) > 2 and sys.argv[1] == "-f":
+		path = sys.argv[2]
+		run(path)
+	else:
+		path = "db/klementavicius-rimvydas/2011-12-03-1.txt" #improve needed!
+		print "Loading previous article from pickles :)"
+		run(path)
