@@ -41,19 +41,20 @@ article.show()
 
 names = utils.get_names_dict(utils.people)
 
-# TODO: parse chunked text for PRP - 3
+# TODO: 
 # 		find PRP/name, VRB, PRP/name for - 1
 # 		memory for people: name/name/name/... (they did) - 2
-print "Interactions:" 
 
+interact = []
 for index, sentence in enumerate(utils.tagged_sentences):
 	chunked_sentence = regexp.CustomChunker().parse(sentence)
 	
 	retaged_sentence = utils.retag_chunked(chunked_sentence)
 	new_tagged_sentence = utils.mark_sentence_names(retaged_sentence, names)
 	
+	#TODO: add some details to extracted actions
 	# find prepositions, replace with real names and print what they did
-	who, what, seq = [], [], []
+	who, what, prp, seq = [], [], [], []
 	prp_counter = 0
 	for (word, tag, piece, pt) in new_tagged_sentence:
 		reset = True
@@ -61,11 +62,15 @@ for index, sentence in enumerate(utils.tagged_sentences):
 		if tag.startswith("PRP"): # this is a reference
 			if (w in ("he", "she", "his", "him", "her", "i", "me", "our")):
 				if index in ref_dict[index]:
-					who.append([word, ref_dict[index][1]])
+					who.append(ref_dict[index][1]) # PRP-person mapping exists
+					prp.append(word)
 				else:
-					who.append([word, None])
-		elif w in names: # this word belongs to a person name
-			who.append([None, word])
+					who.append(None) # PRP exists without mapped person
+					prp.append(word)
+		elif w in names: 
+			# this word belongs to a person name, there's no PRP for it
+			who.append(word)
+			prp.append(None)
 		elif piece in ('TARINYS'): 
 			reset = False
 			seq.append(word) 
@@ -74,13 +79,19 @@ for index, sentence in enumerate(utils.tagged_sentences):
 			what.append(" ".join(seq))
 			seq = []
 	
-	#TODO: add some details to extracted actions
-	if len(who) > 1  and len(what) > 0: # only show people & interactions that include an action
-		caps = [] # capitalize each person name
-		for cap in who:
-			caps.append(" ".join([e[0].upper()+e[1:] for e in cap.split(" ")]))
-		print ", ".join(caps), "-", ", ".join(what)
-	
-		
-		
-		
+	if len(who) > 1 and len(what) > 0: # only show people & their interactions that include an action
+		# capitalize each person name/surname first letter
+		for i, boo in enumerate(who):
+			who[i] = " ".join([part[0].upper()+part[1:] for part in boo.split(" ")])
+		interact.append({'who':who, 'prp': prp, 'what':what})
+
+print "Interactions:"
+for index, item in enumerate(interact):
+	who, prp, what = item['who'], item['prp'], item['what']
+	s = "["+str(index+1)+"]:"
+	for i in xrange(len(who)):
+		if prp[i] and who[i]: s += " " + who[i] + "(" + prp[i] + "), "
+		elif prp[i]: s += prp[i] + ", "
+		elif who[i]: s += " " + who[i] + ", "
+	s += " - " + ", ".join(what)
+	print s
