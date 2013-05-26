@@ -3,7 +3,7 @@ import utils, regexp
 '''
 	Asmenu saveikos (ATVEJAI):
 		1) Ivardis, Tarinys, Ivardis
-		2) Ivardis (THEY), Tarinys (anksciau pamineti vardaI)
+		2) Ivardis (THEY), Tarinys (anksciau pamineti vardai)
 		3) Objektas, Tarinys, Aplinkybe (su vardu)
 '''
 

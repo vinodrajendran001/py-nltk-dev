@@ -1,5 +1,5 @@
 import nltk, data, pickle
-import ner, config, training, sys, utils, action, references, ph_reduction
+import ner, config, training, sys, utils, action, references, ph_reduction, interactions
 
 from summarize import SimpleSummarizer
 
@@ -36,11 +36,10 @@ def run(path):
 	print_to_screen_and_file(instance.summarize(article.text, len(utils.sentences) / 3))
 	print_to_screen_and_file("-"*80)
 
-	#TODO: summary from phrase reduction
+	#TODO: summary from phrase reduction to file!
 	print_to_screen_and_file("II Summary:")
 	print_to_screen_and_file("")
-	#print_to_screen_and_file(test_regex_summary.get_summary(path))
-	print " ".join(ph_reduction.PhraseReductor().find(utils.tagged_sentences))
+	print_to_screen_and_file(" ".join(ph_reduction.PhraseReductor().find(utils.tagged_sentences)))
 	print_to_screen_and_file("-"*80)
 	
 	# classification
@@ -60,6 +59,7 @@ def run(path):
 
 	# people actions
 	print_to_screen_and_file("People and their actions:")
+	print_to_screen_and_file("")
 	work = action.Actions().find(utils.tagged_words, utils.tagged_sentences, utils.people)
 	# print the updated info with people actions
 	for i, (key, value) in enumerate(work.items()):
@@ -68,6 +68,7 @@ def run(path):
 
 	# anaphora
 	print_to_screen_and_file("Anaphoras:")
+	print_to_screen_and_file("")
 	refs = references.References().find(utils.people, utils.sentences, utils.tagged_sentences)
 	for ref, fullname, index in refs:
 		fp.write("Sentence["+str(index+1)+"]: " + ref + " - "+ fullname + "\n")
@@ -75,7 +76,20 @@ def run(path):
 
 	# interactions
 	print_to_screen_and_file("People interactions:")
+	print_to_screen_and_file("")
+	inter = interactions.Interactor().find(refs, utils.tagged_sentences)
+	for index, item in enumerate(inter):
+		who, prp, what = item['who'], item['prp'], item['what']
+		s = "["+str(index+1)+"]:"
+		for i in xrange(len(who)):
+			if prp[i] and who[i]: s += " " + who[i] + "(" + prp[i] + "), "
+			elif prp[i]: s += prp[i] + ", "
+			elif who[i]: s += " " + who[i] + ", "
+		s += " - " + ", ".join(what)
+		print_to_screen_and_file(s)
+		#print s
 	print_to_screen_and_file("-"*80)
+	print "Finished."
 
 	fp.close()
 
