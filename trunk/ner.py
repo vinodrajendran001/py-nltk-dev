@@ -3,7 +3,7 @@ from nltk.tree import Tree
 
 #TODO: 
 # 1) go through all sentences & search for missed names from DB!
-# 2) Detection of relations between found entities(NEN - named entity normalization/linking) - scan text
+#
 class NERFinder:
 	def __init__(self):
 		# load names database
@@ -124,6 +124,21 @@ class NERFinder:
 				elif name_good == False:
 					print "Removing", fullname, "as not a person detected - not good"
 					rem = True
+				else:
+					votes = 0 
+					'''attention: can remove good names too!'''
+					parts = fullname.lower().split(" ")
+					for part in parts:
+						if self.is_generic_word(part):
+							votes += 1
+							
+					for part in parts:
+						if self.is_country_or_city(part):
+							votes += 1
+							
+					if votes >= 2: # this name is no good, too much bad votes
+						print "Removing", fullname, "as not a person detected - parts contain generic/city words, votes:", votes
+						rem = True
 			
 			if rem:
 				del people[fullname]

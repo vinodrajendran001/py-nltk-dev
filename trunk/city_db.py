@@ -13,7 +13,7 @@ class CityChecker:
 			self.countries.add(country.strip().lower())
 		
 	def hasCity(self, name):
-		for row in self.c.execute('''SELECT 1 FROM cities WHERE name=?;''', (name.lower(),)):
+		for row in self.c.execute("SELECT 1 FROM cities WHERE name = ?;", (name.lower(),)):
 			return True
 		return False
 		
