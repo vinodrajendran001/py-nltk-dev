@@ -68,7 +68,7 @@ class References:
 							last_unknown = [None, 0] # clear
 					
 					#### determine the person mentioned
-					print "*"*80
+					#print "*"*80
 					matched = None
 					if word in ("he", "his", "him") and last_he[0]: # male
 						matched = last_he
@@ -87,12 +87,12 @@ class References:
 					
 					if matched: # refresh index - this person has been just mentioned
 						matched[1] = word_index
-						print "REF[", word, "] is -", matched[0]['fullname'], "- in sentence Nr.", index
+						#print "REF[", word, "] is -", matched[0]['fullname'], "- in sentence Nr.", index
 						refs.append([word, matched[0]['fullname'], index])
 					else:
-						print "REF[", word, "] is", "UNKNOWN", "in sentence Nr.", index
+						#print "REF[", word, "] is", "UNKNOWN", "in sentence Nr.", index
 						refs.append([word, "?", index])
-					print "\t", sentences[index] # show the corresponding sentence with the match
+					#print "\t", sentences[index] # show the corresponding sentence with the match
 					
 				elif flag == "+": # a word is a name, so put it into memory
 					if data["sex"] == "male":

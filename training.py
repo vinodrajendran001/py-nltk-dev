@@ -77,7 +77,7 @@ def run(classifier, max_words):
 # script start spot
 if __name__ == "__main__":
 	#print "CLI arguments:", sys.argv
-	elif "-m" in sys.argv: 
+	if "-m" in sys.argv: 
 		print "Using MaxentClassifier classifer"
 		run(nltk.classify.MaxentClassifier, 100)
 	elif "-d" in sys.argv:
