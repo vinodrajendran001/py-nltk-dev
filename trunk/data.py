@@ -49,22 +49,20 @@ class Article:
 		print "-"*80
 		
 # assigns the class to an article by analyzing its categories
-def determine_class(article, top5):
-	tag = ""
+def determine_classes(article, top5):
+	tag_list = []
 	for (catname, count, class_tag) in top5:	
 		if catname in article.cats:
-			if tag != "": return "MULTI"
-			tag = class_tag
-	if tag == "": return "OTHER"
-	return tag
+			tag_list.append(class_tag)
+	return tag_list
 
 def run():
 	# parse all articles & count catagories
 	articles = []
 	for root, dirs, files in os.walk(config.DIRECTORY):
-		for file in files:
-			if file.endswith('.txt'):
-				articles.append(Article(root+"/"+file))
+		for fp in files:
+			if fp.endswith('.txt'):
+				articles.append(Article(root+"/"+fp))
 	print "Total articles parsed:", len(articles)
 	
 	# compute the number of training set size
@@ -108,12 +106,37 @@ def run():
 	classmap = {}
 	
 	# sort all articles by their class/tag
+	multiclass = []
 	for article in articles:
-		article_class = determine_class(article, top)
-		if article_class in classmap: # count all articles in each class
-			classmap[article_class].append(article)
+		tags_list = determine_classes(article, top)
+		tag = "OTHER"
+		if len(tags_list) == 1:
+			tag = tags_list[0]
+		elif len(tags_list) > 1:
+			tag = "MULTI" # more than one class
+			
+		if tag in classmap: # count all articles in each class
+			classmap[tag].append(article)
 		else:
-			classmap[article_class] = [article]
+			classmap[tag] = [article]
+			
+		if tag == "MULTI": # save to split later
+			multiclass.append([article, tags_list])
+			
+	# make positive - negative examples by each class
+	for key in classmap.keys():
+		if key in config.DUMP_FILES:
+			temp = []
+			for article in classmap[key]:
+				temp.append([article.filename, key])
+			for article, tags_list in multiclass: # include multiclass article too (do split)
+				if key in tags_list:
+					temp.append([article.filename, key])
+			fname = config.DUMP_FILES[key]
+			print "Dumping " + key + " articles to: " + fname, "found:", len(temp)
+			pickle.dump(temp, file(fname, 'w'))
+		else:
+			print "Dumping " + key + " articles to: skipped"
 
 	print "Articles in each class (class = count):"
 	total = 0
@@ -130,8 +153,8 @@ def run():
 	print "Allowed to use of each class (%d percent):"%(config.TRAINING_SET_SIZE)
 	print "\t",sum([allowed[k] for k in allowed.keys()]), "total, items of each class:", allowed
 	
-	# try filling the training set in iterations in each iteration 
-	# add at least one example of each class/tag article (if available)
+	# try filling the training set in iterations 
+	# in each iteration add at least one example of each class/tag article (if available - be fair)
 	test_set = []
 	train_set = []
 	index = 0
