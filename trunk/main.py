@@ -3,14 +3,16 @@ import ner, config, training, sys, utils, action, references, ph_reduction, inte
 
 from summarize import SimpleSummarizer
 
+fp = None
+
 def print_to_screen_and_file(text):
 	print text
-	if type(text) == list:
-		for index, item in enumerate(text):
-			print index, item
-	else:
-		fp.write(text+"\n")
-		fp.flush()
+	#if type(text) == list:
+	#	for index, item in enumerate(text):
+	#		print index, item
+	#else:
+	fp.write(str(text)+"\n")
+	fp.flush()
 
 def run(path):
 	global fp
@@ -27,10 +29,14 @@ def run(path):
 	print_to_screen_and_file("")
 	print_to_screen_and_file(article.text)
 	print_to_screen_and_file("-"*80)
+	print_to_screen_and_file("Categories:")
+	print_to_screen_and_file(article.cats)
+	print_to_screen_and_file("-"*80)
 
 	# make the summary & show in console
 	print_to_screen_and_file("I Summary:")
 	print_to_screen_and_file("")
+	
 	instance = SimpleSummarizer()
 	# shorten the original article by one third
 	print_to_screen_and_file(instance.summarize(article.text, len(utils.sentences) / 3))
@@ -43,18 +49,32 @@ def run(path):
 	print_to_screen_and_file("-"*80)
 	
 	# classification
+	print_to_screen_and_file("Multiclass classification:")
 	stemmer = nltk.stem.WordNetLemmatizer()
 	words = nltk.tokenize.wordpunct_tokenize(article.text)
 	feats = utils.bag_of_words(words, article.text, stemmer)
 	
-	classifier = pickle.load(file(config.BAYES_CLASSIFIER_FILE))
+	classifier = pickle.load(file(config.BAYES_CLASSIFIER_FILE, 'r'))
 	print_to_screen_and_file("BayesClassifier class: " + classifier.classify(feats))
 	
-	classifier = pickle.load(file(config.MAXENT_CLASSIFIER_FILE))
+	classifier = pickle.load(file(config.MAXENT_CLASSIFIER_FILE, 'r'))
 	print_to_screen_and_file("MaxEntClassifier class: " + classifier.classify(feats))
 	
-	classifier = pickle.load(file(config.DTREE_CLASSIFIER_FILE))
+	classifier = pickle.load(file(config.DTREE_CLASSIFIER_FILE, 'r'))
 	print_to_screen_and_file("DecisionTreeClassifier class: " + classifier.classify(feats))
+	print_to_screen_and_file("-"*80)
+	
+	print_to_screen_and_file("Binary classification:")
+	title = ["BayesClassifier: ", "MaxEntClassifier: ", "DecisionTreeClassifier: "]
+	classifiers = [config.BAYES_CLASSIFIER_FILE_PATTERN, config.MAXENT_CLASSIFIER_FILE_PATTERN, config.DTREE_CLASSIFIER_FILE_PATTERN]
+	tags = ["A", "B", "C", "D", "E", "OTHER"]
+	for index, typename in enumerate(classifiers):
+		results = {}
+		for tag in tags:
+			fname = typename%(tag)
+			classifier = pickle.load(file(fname, 'r'))
+			results[tag] = classifier.classify(feats)
+		print_to_screen_and_file(title[index] + str(results))
 	print_to_screen_and_file("-"*80)
 
 	# people actions
@@ -71,7 +91,7 @@ def run(path):
 	print_to_screen_and_file("")
 	refs = references.References().find(utils.people, utils.sentences, utils.tagged_sentences)
 	for ref, fullname, index in refs:
-		fp.write("Sentence["+str(index+1)+"]: " + ref + " - "+ fullname + "\n")
+		print_to_screen_and_file("Sentence["+str(index+1)+"]: " + ref + " - "+ fullname + "\n")
 	print_to_screen_and_file("-"*80)
 
 	# interactions
@@ -87,7 +107,7 @@ def run(path):
 			elif who[i]: s += " " + who[i] + ", "
 		s += " - " + ", ".join(what)
 		print_to_screen_and_file(s)
-		#print s
+
 	print_to_screen_and_file("-"*80)
 	print "Finished."
 
@@ -96,9 +116,8 @@ def run(path):
 # script start spot
 if __name__ == "__main__":
 	if len(sys.argv) > 2 and sys.argv[1] == "-f":
-		path = sys.argv[2]
-		run(path)
+		run(sys.argv[2])
 	else:
-		path = "db/klementavicius-rimvydas/2011-12-03-1.txt" #improve needed!
+		# default
 		print "Loading previous article from pickles :)"
-		run(path)
+		run("db/klementavicius-rimvydas/2011-12-03-1.txt")
