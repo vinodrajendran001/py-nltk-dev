@@ -77,12 +77,12 @@ def run(classifier, max_words):
 # script start spot
 if __name__ == "__main__":
 	#print "CLI arguments:", sys.argv
-	if "-n" in sys.argv:
-		print "Using default NaiveBayesClassifier classifer"
-		run(nltk.classify.NaiveBayesClassifier, 1000)
 	elif "-m" in sys.argv: 
 		print "Using MaxentClassifier classifer"
 		run(nltk.classify.MaxentClassifier, 100)
 	elif "-d" in sys.argv:
 		print "Using DecisionTreeClassifier"
 		run(nltk.classify.DecisionTreeClassifier, 10)
+	else:
+		print "Using default NaiveBayesClassifier classifer"
+		run(nltk.classify.NaiveBayesClassifier, 1000)

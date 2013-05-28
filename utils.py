@@ -15,12 +15,13 @@ def join_tagged(tagged):
 	return s
 	
 # extracts features from text - here the features are the words themselves
-def bag_of_words(tokens, text, stemmer):
+def bag_of_words(tokens, text, stemmer, flag=True):
 	bag = {}
 	for t in tokens:
 		t_lower = t.lower()
 		if len(t) > 1:
-			bag[stemmer.lemmatize(t_lower)] = True
+			# flag determines if this feature should exist or not in article for a `match`
+			bag[stemmer.lemmatize(t_lower)] = flag 
 			''' disabled features, as they just lower the accuracy of the classifier
 			bag['starts with %c'%t_lower[0]] = True
 			bag['ends with %c'%t_lower[-1]] = True
