@@ -36,7 +36,7 @@ class Interactor:
 				w = word.lower()
 				if tag.startswith("PRP"): # this is a reference
 					if (w in ("he", "she", "his", "him", "her", "i", "me", "our")):
-						if index in ref_dict[index]:
+						if index in ref_dict:
 							who.append(ref_dict[index][1]) # PRP-person mapping exists
 							prp.append(word)
 						else:
@@ -57,7 +57,8 @@ class Interactor:
 			if len(who) > 1 and len(what) > 0: # only show people & their interactions that include an action
 				# capitalize each person name/surname first letter
 				for i, boo in enumerate(who):
-					who[i] = " ".join([part[0].upper()+part[1:] for part in boo.split(" ")])
+					if boo:
+						who[i] = " ".join([part[0].upper()+part[1:] for part in boo.split(" ")])
 				interact.append({'who':who, 'prp': prp, 'what':what})
 				
 		return interact 

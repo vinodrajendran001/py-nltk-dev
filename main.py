@@ -24,8 +24,13 @@ def run(path):
 	print_to_screen_and_file("Original article:\n")
 	print_to_screen_and_file(article.text)
 	print_to_screen_and_file("-"*80)
+	
 	print_to_screen_and_file("Categories:\n")
-	print_to_screen_and_file(article.cats)
+	top5 = pickle.load(open(config.TOP5_CATEGORIES, "r")); # list of: [catname, count, tag]
+	print_to_screen_and_file("In article: " + str(article.cats))
+	print_to_screen_and_file("Top5: " + str(top5))
+	ground_truth = [tag for cat, count, tag in top5 if cat in article.cats]
+	print_to_screen_and_file("Present from Top5: " + str(ground_truth))
 	print_to_screen_and_file("-"*80)
 
 	# make the summary & show in console
@@ -47,13 +52,16 @@ def run(path):
 	feats = utils.bag_of_words(words, article.text, stemmer)
 	
 	classifier = pickle.load(file(config.BAYES_CLASSIFIER_FILE, 'r'))
-	print_to_screen_and_file("BayesClassifier class: " + classifier.classify(feats))
+	b_class = classifier.classify(feats)
+	print_to_screen_and_file("BayesClassifier class: " + b_class + ", is correct? " + str(b_class in ground_truth))
 	
 	classifier = pickle.load(file(config.MAXENT_CLASSIFIER_FILE, 'r'))
-	print_to_screen_and_file("MaxEntClassifier class: " + classifier.classify(feats))
+	m_class = classifier.classify(feats)
+	print_to_screen_and_file("MaxEntClassifier class: " + m_class + ", is correct? " + str(m_class in ground_truth))
 	
 	classifier = pickle.load(file(config.DTREE_CLASSIFIER_FILE, 'r'))
-	print_to_screen_and_file("DecisionTreeClassifier class: " + classifier.classify(feats))
+	d_class = classifier.classify(feats)
+	print_to_screen_and_file("DecisionTreeClassifier class: " + d_class + ", is correct? " + str(d_class in ground_truth))
 	print_to_screen_and_file("-"*80)
 	
 	print_to_screen_and_file("Binary classification:\n")
@@ -62,11 +70,17 @@ def run(path):
 	tags = ["A", "B", "C", "D", "E", "OTHER"]
 	for index, typename in enumerate(classifiers):
 		results = {}
+		accuracy = 0
 		for tag in tags:
 			fname = typename%(tag)
 			classifier = pickle.load(file(fname, 'r'))
 			results[tag] = classifier.classify(feats)
-		print_to_screen_and_file(title[index] + str(results))
+			if results[tag] == "yes":
+				if (tag in ground_truth): accuracy += 1
+			elif results[tag] == "no":
+				if (tag not in ground_truth): accuracy += 1
+			
+		print_to_screen_and_file(title[index] + str(results)+", accuracy: " + str(accuracy*100/len(tags)) + "%")
 	print_to_screen_and_file("-"*80)
 
 	# people actions
