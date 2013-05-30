@@ -129,9 +129,9 @@ def run():
 			temp = []
 			for article in classmap[key]:
 				temp.append([article.filename, key])
-			for article, tags_list in multiclass: # include multiclass article too (do split)
+			'''for article, tags_list in multiclass: # include multiclass article too (do split)
 				if key in tags_list:
-					temp.append([article.filename, key])
+					temp.append([article.filename, key])'''
 			fname = config.DUMP_FILES[key]
 			print "Dumping " + key + " articles to: " + fname, "found:", len(temp)
 			pickle.dump(temp, file(fname, 'w'))
