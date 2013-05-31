@@ -1,6 +1,6 @@
 import nltk, pickle, config, data, random, sys, utils
 
-def load_samples(sample_list, tag, stemmer, max_words, flag=True):
+def load_samples(sample_list, tag, stemmer, max_words):
 	data_set = []
 	for (filename, category) in sample_list:
 		# extract article words
@@ -11,7 +11,7 @@ def load_samples(sample_list, tag, stemmer, max_words, flag=True):
 		if len(tokens) > max_words: # limit to max most frequent words per article
 			tokens = tokens[:max_words]
 		
-		data_set.append((utils.bag_of_words(tokens, words, stemmer, flag), tag))
+		data_set.append((utils.bag_of_words(tokens, words, stemmer, True), tag))
 	random.shuffle(data_set)
 	return data_set
 	
@@ -63,10 +63,10 @@ def run(classifier, max_words):
 		
 		print "Loading training & testing data"
 		# TODO: optimize speed/loading - preload all articles into map & just select from it on every request
-		pos_training_set = load_samples(positive_train, "yes", stemmer, max_words, True)
-		pos_testing_set = load_samples(positive_test, "yes", stemmer, max_words, True)
-		neg_training_set = load_samples(negative_train, "no", stemmer, max_words, False)
-		neg_testing_set = load_samples(negative_test, "no", stemmer, max_words, False)
+		pos_training_set = load_samples(positive_train, "yes", stemmer, max_words)
+		pos_testing_set = load_samples(positive_test, "yes", stemmer, max_words)
+		neg_training_set = load_samples(negative_train, "no", stemmer, max_words)
+		neg_testing_set = load_samples(negative_test, "no", stemmer, max_words)
 		print "Positive - train on %d samples, test on %d samples" % (len(pos_training_set), len(pos_testing_set))
 		print "Negative - train on %d samples, test on %d samples" % (len(neg_training_set), len(neg_testing_set))
 		
