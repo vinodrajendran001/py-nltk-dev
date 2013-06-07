@@ -32,6 +32,7 @@
 
 	Female/male names dictionary used from NLTK project: https://code.google.com/p/nltk/<br>
 	English words dictionary used from: http://www-01.sil.org/linguistics/wordlists/english/
+  World cities database used from: http://www.maxmind.com/en/worldcities
 
 ==Requirements==
 	 * Python 2.7 (http://www.python.org/download/releases/)
